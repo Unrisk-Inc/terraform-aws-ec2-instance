@@ -16,6 +16,17 @@ variable "ami" {
   default     = ""
 }
 
+variable "lb_url" {
+  description = "LB_URL"
+  type        = string
+}
+
+variable "nlb_start_port" {
+  description = "Default start port for the NLB incrementation"
+  type        = string
+  default     = "22"
+}
+
 variable "associate_public_ip_address" {
   description = "Whether to associate a public IP address with an instance in a VPC"
   type        = bool

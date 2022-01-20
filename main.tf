@@ -54,7 +54,15 @@ resource "aws_instance" "this" {
       volume_size           = lookup(root_block_device.value, "volume_size", null)
       volume_type           = lookup(root_block_device.value, "volume_type", null)
       throughput            = lookup(root_block_device.value, "throughput", null)
-      tags                  = lookup(root_block_device.value, "tags", null)
+      tags                  = merge(
+        {
+          "LB_URL" = var.lb_url
+        },
+        {
+          "LB_PORT" = tostring(var.nlb_start_port + count.index)
+        },
+        lookup(root_block_device.value, "tags", null)
+      )
     }
   }
 
@@ -70,6 +78,14 @@ resource "aws_instance" "this" {
       volume_size           = lookup(ebs_block_device.value, "volume_size", null)
       volume_type           = lookup(ebs_block_device.value, "volume_type", null)
       throughput            = lookup(ebs_block_device.value, "throughput", null)
+      tags                  =     merge(
+        {
+          "LB_URL" = var.lb_url
+        },
+        {
+          "LB_PORT" = tostring(var.nlb_start_port + count.index)
+        }
+      )
     }
   }
 
@@ -131,8 +147,8 @@ resource "aws_instance" "this" {
     delete = lookup(var.timeouts, "delete", null)
   }
 
-  tags        = merge({ "Name" = var.name }, var.tags)
-  volume_tags = var.enable_volume_tags ? merge({ "Name" = var.name }, var.volume_tags) : null
+  tags        = merge({ "Name" = var.name }, { "LB_URL" = var.lb_url }, { "LB_PORT" = tostring(var.nlb_start_port + count.index) }, var.tags)
+  volume_tags = var.enable_volume_tags ? merge({ "Name" = var.name }, { "LB_URL" = var.lb_url }, {"LB_PORT" = tostring(var.nlb_start_port + count.index) }, var.volume_tags) : null
 }
 
 resource "aws_spot_instance_request" "this" {
@@ -198,7 +214,15 @@ resource "aws_spot_instance_request" "this" {
       volume_size           = lookup(root_block_device.value, "volume_size", null)
       volume_type           = lookup(root_block_device.value, "volume_type", null)
       throughput            = lookup(root_block_device.value, "throughput", null)
-      tags                  = lookup(root_block_device.value, "tags", null)
+      tags                  = merge(
+        {
+          "LB_URL" = var.lb_url
+        },
+        {
+          "LB_PORT" = tostring(var.nlb_start_port + count.index)
+        },
+        lookup(root_block_device.value, "tags", null)
+      )
     }
   }
 
@@ -214,6 +238,14 @@ resource "aws_spot_instance_request" "this" {
       volume_size           = lookup(ebs_block_device.value, "volume_size", null)
       volume_type           = lookup(ebs_block_device.value, "volume_type", null)
       throughput            = lookup(ebs_block_device.value, "throughput", null)
+      tags                  =     merge(
+        {
+          "LB_URL" = var.lb_url
+        },
+        {
+          "LB_PORT" = tostring(var.nlb_start_port + count.index)
+        }
+      )
     }
   }
 
@@ -273,6 +305,6 @@ resource "aws_spot_instance_request" "this" {
     delete = lookup(var.timeouts, "delete", null)
   }
 
-  tags        = merge({ "Name" = var.name }, var.tags)
-  volume_tags = var.enable_volume_tags ? merge({ "Name" = var.name }, var.volume_tags) : null
+  tags        = merge({ "Name" = var.name }, { "LB_URL" = var.lb_url }, { "LB_PORT" = tostring(var.nlb_start_port + count.index) }, var.tags)
+  volume_tags = var.enable_volume_tags ? merge({ "Name" = var.name }, { "LB_URL" = var.lb_url }, { "LB_PORT" = tostring(var.nlb_start_port + count.index) }, var.volume_tags) : null
 }
