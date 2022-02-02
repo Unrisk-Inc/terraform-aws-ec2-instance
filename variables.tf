@@ -3,6 +3,17 @@ variable "name" {
   type        = string
 }
 
+variable "lb_url" {
+  description = "LB_URL"
+  type        = string
+}
+
+variable "nlb_start_port" {
+  description = "Default start port for the NLB incrementation"
+  type        = string
+  default     = "22"
+}
+
 variable "instance_count" {
   description = "Number of instances to launch"
   type        = number
